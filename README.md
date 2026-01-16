@@ -1,27 +1,85 @@
-# Employee Attrition
-[
-![Attrition-01](https://user-images.githubusercontent.com/53073185/87855289-e83cc300-c934-11ea-991f-59b7eb395eda.png)
-](url)
+# Employee Attrition Prediction using Machine Learning
 
-image source : vantagecircle
+![Employee Attrition](https://user-images.githubusercontent.com/53073185/87855289-e83cc300-c934-11ea-991f-59b7eb395eda.png)
 
-Attrition is the silent killer that can switly disable even the most successful and stable of the organizations in a shockingly spare amount of time.
-Hiring new employees are extremely complex task that requires capital, time and skills.Also new employee costs a lot more than that Persons salary.
+Employee attrition is a critical challenge for organizations, leading to increased costs in hiring, training, and productivity loss.  
+This project focuses on predicting employee attrition using Machine Learning techniques to help organizations take proactive retention measures.
 
-- The cost of hiring an employee goes far beyond just paying for their salary to encompass recruiting, training, benefits, and more.
-- Small companies spent, on average, more than $1,500 on training, per employee, in 2019.
-- Integrating a new employee into the organization can also require time and expenditures.
-- It can take up to six months or more for a company to break even on its investment in a new hire.
+---
 
-[The Cost of Hiring a New Employee - Investopedia](https://www.investopedia.com/financial-edge/0711/the-cost-of-hiring-a-new-employee.aspx)
+## 📊 Dataset
+- **IBM HR Analytics Employee Attrition & Performance**
+- Source: Kaggle  
+- Link: https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset
+- Dataset contains employee demographics, job role, compensation, satisfaction metrics, and attrition labels.
 
-In this project, I have developed a Machine Learning Model to predict the Employee Attrition by implementing various Machine Learning Algorithms.
-Conducted exploratory data analysis using various data visualization techniques.
+---
 
-Achieved good accuracy on the 'IBM HR Analytics Employee Attrition & Performance' dataset from Kaggle,using Logistic Regression.
+## 🔍 Exploratory Data Analysis
+- Analyzed categorical and numerical features
+- Visualized attrition patterns across:
+  - Job Role
+  - Age
+  - Monthly Income
+  - Business Travel
+  - Work-Life Balance
+- Identified class imbalance and key contributing factors
 
-Dataset Link - [IBM HR Analytics Employee Attrition & Performance](https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset)
+---
 
-Made a WEB API using [Flask](https://flask.palletsprojects.com/en/1.1.x/) framework and deployed it on [Heroku](https://www.heroku.com/) cloud platform. Below is the link to access the API.
+## 🤖 Models Implemented
+The following machine learning models were trained and evaluated:
 
-Web API - [Employee Attrition](https://employee-attrition-pred.herokuapp.com/)
+- Logistic Regression
+- Support Vector Machine (SVM)
+- K-Nearest Neighbors (KNN)
+- Naive Bayes
+- Perceptron
+- Stochastic Gradient Descent
+- Decision Tree
+- Random Forest
+- Gradient Boosting Trees
+- **CatBoost Classifier**
+
+---
+
+## 📈 Model Evaluation Strategy
+- Train–Test Split (70% / 30%)
+- K-Fold Cross Validation
+- Accuracy used as evaluation metric
+- Overfitting was explicitly checked by comparing training accuracy vs cross-validation accuracy
+
+---
+
+## 🏆 Final Model Selection
+- Tree-based models like **Decision Tree** and **Random Forest** achieved very high training accuracy (≈100%) but showed **overfitting**
+- **CatBoost Classifier** achieved the **highest cross-validation accuracy (~89%)**, indicating better generalization
+- CatBoost demonstrated strong generalization performance and achieved the highest cross-validation accuracy among all evaluated models.
+
+### ✅ Final Selected Model:
+**CatBoost Classifier**
+
+---
+
+## 📦 Model Persistence
+- The final trained model was saved using `joblib`
+- File: `final_catboost_model.pkl`
+- The saved model can be reused for prediction without retraining
+
+---
+
+## 🛠 Technologies Used
+- Python
+- Pandas, NumPy
+- Matplotlib, Seaborn
+- Scikit-learn
+- CatBoost
+- Jupyter Notebook
+
+---
+
+## 🚀 Future Scope
+- Handle class imbalance using SMOTE
+- Hyperparameter tuning
+- Deploy as a REST API using Flask
+- Build a web UI for HR teams
