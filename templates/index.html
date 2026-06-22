@@ -1,88 +1,282 @@
 <!DOCTYPE html>
-<html >
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Employee Attrition Prediction</title>
-  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Attrition Prediction | HR Analytics</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
 <body>
- <div class="login">
 
-	<h1>Predict Attrition</h1>
+<div class="hero-section">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="brand-badge"><i class="fas fa-chart-line"></i> HR Analytics Suite</div>
+        <h1 class="hero-title">Employee Attrition Prediction</h1>
+        <p class="hero-subtitle">Predict which employees are likely to leave using machine learning insights.</p>
+      </div>
+      <div class="hero-stats d-none d-md-flex">
+        <div class="stat"><div class="stat-num">ML</div><div class="stat-lbl">Powered</div></div>
+        <div class="stat"><div class="stat-num">30+</div><div class="stat-lbl">Features</div></div>
+        <div class="stat"><div class="stat-num">Real-time</div><div class="stat-lbl">Insights</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-     <!-- Main Input For Receiving Query to our ML -->
-    <form action="{{ url_for('predict')}}" method="POST" autocomplete="on">
+<div class="container main-container">
 
-        <strong>Age</strong> : <input type="number" name="Age" placeholder="18-80" required min="18" max="80"><br><br>
+  {% if prediction_text %}
+  <div class="result-card {% if 'Leave' in prediction_text %}result-danger{% elif 'Stay' in prediction_text %}result-success{% else %}result-neutral{% endif %} mb-4">
+    <div class="result-icon">
+      {% if 'Leave' in prediction_text %}
+        <i class="fas fa-triangle-exclamation"></i>
+      {% elif 'Stay' in prediction_text %}
+        <i class="fas fa-circle-check"></i>
+      {% else %}
+        <i class="fas fa-info-circle"></i>
+      {% endif %}
+    </div>
+    <div>
+      <div class="result-label">Prediction Result</div>
+      <h2 class="result-text">{{ prediction_text }}</h2>
+    </div>
+  </div>
+  {% endif %}
 
-        <strong>BusinessTravel</strong> : <input type="radio" name="BusinessTravel" id="Rarely" value="Rarely">Rarely  <input type="radio" name="BusinessTravel" id="Frequently" value="Frequently">  Frequently<input type="radio" name="BusinessTravel" id="No Travel"  value="No Travel">No Travel<br><br>
+  <form action="{{ url_for('predict') }}" method="POST" autocomplete="on">
 
-        <strong>Daily Rate</strong> : <input type="number" name="Daily Rate" placeholder="100-1600" required min="100" max="1600" size="30"><br><br>
+    <!-- Personal Information -->
+    <div class="card section-card">
+      <div class="card-header">
+        <div class="section-icon bg-blue"><i class="fas fa-user"></i></div>
+        <div>
+          <h3>Personal Information</h3>
+          <p>Demographics and background details</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Age</label>
+            <input type="number" class="form-control" name="Age" placeholder="18-80" required min="18" max="80">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Gender</label>
+            <select class="form-select" name="Gender" required>
+              <option value="" disabled selected>Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Marital Status</label>
+            <select class="form-select" name="Marital Status" required>
+              <option value="" disabled selected>Select status</option>
+              <option value="Married">Married</option>
+              <option value="Single">Single</option>
+              <option value="Divorced">Divorced</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Education Level</label>
+            <input type="number" class="form-control" name="Education" placeholder="1-5" required min="1" max="5">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Education Field</label>
+            <select class="form-select" name="Education Field" required>
+              <option value="" disabled selected>Select field</option>
+              <option value="Life Sciences">Life Sciences</option>
+              <option value="Medical">Medical</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Technical Degree">Technical Degree</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Distance From Home</label>
+            <input type="number" class="form-control" name="Distance From Home" placeholder="1-29" required min="1" max="29">
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <strong>Department</strong> :<input type="radio" name="Department" id="Research & Development" value="Research & Development">Research & Development  <input type="radio" name="Department" id="Human Resources" value="Human Resources">Human Resources  <input type="radio" name="Department" id="Sales"  value="Sales">Sales<br><br>
+    <!-- Job Information -->
+    <div class="card section-card">
+      <div class="card-header">
+        <div class="section-icon bg-purple"><i class="fas fa-briefcase"></i></div>
+        <div>
+          <h3>Job Information</h3>
+          <p>Role, department and compensation</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Department</label>
+            <select class="form-select" name="Department" required>
+              <option value="" disabled selected>Select department</option>
+              <option value="Research & Development">Research & Development</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Sales">Sales</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Job Role</label>
+            <select class="form-select" name="Job Role" required>
+              <option value="" disabled selected>Select role</option>
+              <option value="Sales Executives">Sales Executive</option>
+              <option value="Research Scientist">Research Scientist</option>
+              <option value="Laboratory Technician">Laboratory Technician</option>
+              <option value="Manufacturing Director">Manufacturing Director</option>
+              <option value="Healthcare Representative">Healthcare Representative</option>
+              <option value="Manager">Manager</option>
+              <option value="Sales Representative">Sales Representative</option>
+              <option value="Research Director">Research Director</option>
+              <option value="Human Resources">Human Resources</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Job Level</label>
+            <input type="number" class="form-control" name="Job Level" placeholder="1-5" required min="1" max="5">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Business Travel</label>
+            <select class="form-select" name="BusinessTravel" required>
+              <option value="" disabled selected>Select frequency</option>
+              <option value="Rarely">Rarely</option>
+              <option value="Frequently">Frequently</option>
+              <option value="No Travel">No Travel</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Over Time</label>
+            <select class="form-select" name="Over Time" required>
+              <option value="" disabled selected>Select option</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Daily Rate</label>
+            <input type="number" class="form-control" name="Daily Rate" placeholder="100-1600" required min="100" max="1600">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Hourly Rate</label>
+            <input type="number" class="form-control" name="Hourly Rate" placeholder="30-100" required min="30" max="100">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Monthly Income</label>
+            <input type="number" class="form-control" name="Monthly Income" placeholder="1000-20000" required min="1000" max="20000">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Stock Option Level</label>
+            <input type="number" class="form-control" name="Stock Option Level" placeholder="0-3" required min="0" max="3">
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <strong>Distance From Home</strong> : <input type="number" name="Distance From Home" placeholder="1-29" required min="1" max="29"><br><br>
+    <!-- Satisfaction Metrics -->
+    <div class="card section-card">
+      <div class="card-header">
+        <div class="section-icon bg-pink"><i class="fas fa-heart-pulse"></i></div>
+        <div>
+          <h3>Satisfaction Metrics</h3>
+          <p>Engagement and performance scores</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Environment Satisfaction</label>
+            <input type="number" class="form-control" name="Environment Satisfaction" placeholder="1-4" required min="1" max="4">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Job Involvement</label>
+            <input type="number" class="form-control" name="Job Involvement" placeholder="1-4" required min="1" max="4">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Job Satisfaction</label>
+            <input type="number" class="form-control" name="Job Satisfaction" placeholder="1-4" required min="1" max="4">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Relationship Satisfaction</label>
+            <input type="number" class="form-control" name="Relationship Satisfaction" placeholder="1-4" required min="1" max="4">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Work Life Balance</label>
+            <input type="number" class="form-control" name="Work Life Balance" placeholder="1-4" required min="1" max="4">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Performance Rating</label>
+            <input type="number" class="form-control" name="Performance Rating" placeholder="1-4" required min="1" max="4">
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <strong>Education</strong> : <input type="number" name="Education" placeholder="1-5" required min="1" max="5"><br><br>
+    <!-- Career History -->
+    <div class="card section-card">
+      <div class="card-header">
+        <div class="section-icon bg-teal"><i class="fas fa-clock-rotate-left"></i></div>
+        <div>
+          <h3>Career History</h3>
+          <p>Experience and tenure information</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Number of Companies Worked in</label>
+            <input type="number" class="form-control" name="Number of Companies Worked in" placeholder="0-9" required min="1" max="9">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Total Working Years</label>
+            <input type="number" class="form-control" name="Total Working Years" placeholder="0-40" required min="0" max="40">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Training Times Last Year</label>
+            <input type="number" class="form-control" name="Training Times Last Year" placeholder="0-6" required min="0" max="6">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Years At Company</label>
+            <input type="number" class="form-control" name="Years At Company" placeholder="0-40" required min="0" max="40">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Years In Current Role</label>
+            <input type="number" class="form-control" name="Years In Current Role" placeholder="0-18" required min="0" max="18">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Years Since Last Promotion</label>
+            <input type="number" class="form-control" name="Years Since Last Promotion" placeholder="0-15" required min="0" max="15">
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <label class="form-label">Years With Current Manager</label>
+            <input type="number" class="form-control" name="Years With Curr Manager" placeholder="0-17" required min="0" max="17">
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <strong>Education Field</strong> : <input type="radio" name="Education Field" id="Life Sciences" value="Life Sciences">Life Sciences  <input type="radio" name="Education Field" id="Medical" value="Medical">Medical  <input type="radio" name="Education Field" id="Marketing"  value="Marketing">Marketing  <input type="radio" name="Education Field" id="Technical Degree"  value="Technical Degree">Technical Degree  <input type="radio" name="Education Field" id="Human Resources"  value="Human Resources">Human Resources  <input type="radio" name="Education Field" id="Other"  value="Other">Other  <br><br>
+    <div class="submit-wrap">
+      <button type="submit" class="btn-predict">
+        <i class="fas fa-wand-magic-sparkles"></i> Predict Attrition
+      </button>
+      <p class="submit-hint">Results are generated instantly using our trained ML model.</p>
+    </div>
+  </form>
 
-        <strong>Environment Satisfaction</strong> : <input type="number" name="Environment Satisfaction" placeholder="1-4" required min="1" max="4"><br><br>
+  <footer class="footer">
+    <p>&copy; HR Analytics Suite · Powered by Machine Learning</p>
+  </footer>
+</div>
 
-        <strong>Gender</strong> : <input type="radio" name="Gender" id="Male" value="Male">Male  <input type="radio" name="Gender" id="Female" value="Female">Female<br><br>
-
-        <strong>Hourly Rate</strong> : <input type="number" name="Hourly Rate" placeholder="30-100" required min="30" max="100"><br><br>
-
-        <strong>Job Involvement</strong> : <input type="number" name="Job Involvement" placeholder="1-4" required min="1" max="4"><br><br>
-
-        <strong>Job Level</strong> : <input type="number" name="Job Level" placeholder="1-5" required min="1" max="5"><br><br>
-
-        <strong>Job Role</strong> : <input type="radio" name="Job Role" id="Sales Executive" value="Sales Executives">Sales Executive  <input type="radio" name="Job Role" id="Research Scientist" value="Research Scientist">Research Scientist  <input type="radio" name="Job Role" id="Laboratory Technician"  value="Laboratory Technician">Laboratory Technician  <input type="radio" name="Job Role" id="Manufacturing Director"  value="Manufacturing Director">Manufacturing Director  <input type="radio" name="Job Role" id="Healthcare Representative"  value="Healthcare Representative">Healthcare Representative  <input type="radio" name="Job Role" id="Manager" value="Manager">Manager  <input type="radio" name="Job Role" id="Sales Representative" value="Sales Representative">Sales Representative  <input type="radio" name="Job Role" id="Research Director" value="Research Director">Research Director  <input type="radio" name="Job Role" id="Human Resource" value="Human Resources">Human Resources  <br><br>
-
-        <strong>Job Satisfaction</strong> : <input type="number" name="Job Satisfaction" placeholder="1-4" required min="1" max="4"><br><br>
-
-        <strong>Marital Status</strong> : <input type="radio" name="Marital Status" id="Married" value="Married">Married  <input type="radio" name="Marital Status" id="Single" value="Single">Single  <input type="radio" name="Marital Status" id="Divorced" value="Divorced">Divorced<br><br>
-
-        <strong>Monthly Income</strong> : <input type="number" name="Monthly Income" placeholder="1000-20000" required min="1000" max="20000" size="30">  (1000-20000)<br><br>
-
-        <strong>Number of Companies Worked in</strong> : <input type="number" name="Number of Companies Worked in" placeholder="0-9" required min="1" max="9"><br><br>
-
-        <strong>Over Time</strong> : <input type="radio" name="Over Time" id="Yes" value="Yes">Yes  <input type="radio" name="Over Time" id="No" value="No">No<br><br>
-
-        <strong>Performance Rating</strong> : <input type="number" name="Performance Rating" placeholder="1-4" required min="1" max="4"><br><br>
-
-        <strong>Relationship Satisfaction</strong> : <input type="number" name="Relationship Satisfaction" placeholder="1-4" required min="1" max="4"><br><br>
-
-        <strong>Stock Option Level</strong> : <input type="number" name="Stock Option Level" placeholder="0-3" required min="0" max="3"><br><br>
-
-        <strong>Total Working Years</strong> : <input type="number" name="Total Working Years" placeholder="0-40" required min="0" max="40"><br><br>
-
-        <strong>Training Times Last Year</strong> : <input type="number" name="Training Times Last Year" placeholder="0-6" required min="0" max="6"><br><br>
-
-        <strong>Work Life Balance</strong> : <input type="number" name="Work Life Balance" placeholder="1-4" required min="1" max="4"><br><br>
-
-        <strong>Years At Company</strong> : <input type="number" name="Years At Company" placeholder="0-40" required min="0" max="40"><br><br>
-
-        <strong>Years In Current Role</strong> : <input type="number" name="Years In Current Role" placeholder="0-18" required min="0" max="18"><br><br>
-
-        <strong>Years Since Last Promotion</strong> : <input type="number" name="Years Since Last Promotion" placeholder="0-15" required min="0" max="15"><br><br>
-
-        <strong>Years With Curr Manager</strong> : <input type="number" name="Years With Curr Manager" placeholder="0-17" required min="0" max="17"><br><br>
-
-        <br><button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
-    </form>
-
-   <br>
-   <br>
-     <h1>{{ prediction_text }}</h1>
-
- </div>
-
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
