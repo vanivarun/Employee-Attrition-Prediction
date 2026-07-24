@@ -1,0 +1,23 @@
+artifact_path: file:///C:/Users/varun/OneDrive/Desktop/Employee-Attrition-Prediction/mlruns/1/models/m-40758ee5e7244a44a5c667f6eb017814/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.10.9
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.7.2
+    skops_trusted_types: null
+mlflow_version: 3.14.0
+model_id: m-40758ee5e7244a44a5c667f6eb017814
+model_size_bytes: 22576
+model_uuid: m-40758ee5e7244a44a5c667f6eb017814
+prompts: null
+run_id: ea9cc4f453ca4c59a3377bf486fef64e
+utc_time_created: '2026-07-24 02:20:10.156354'

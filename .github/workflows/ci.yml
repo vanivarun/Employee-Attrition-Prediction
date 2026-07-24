@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run smoke test (full pipeline)
+        run: python test_pipeline.py
+
+      - name: Run unit tests
+        run: python test_preprocessing.py
+
+      - name: Verify model artifact is loadable
+        run: |
+          python -c "
+          import pickle
+          with open('model.pkl', 'rb') as f:
+              a = pickle.load(f)
+          assert 'model' in a
+          assert 'encoder' in a
+          assert 'feature_names' in a
+          print('model.pkl verified:', type(a['model']).__name__, len(a['feature_names']), 'features')
+          "
+
+      - name: Quick Flask app import test
+        run: |
+          python -c "
+          import app
+          print('Flask app imports OK')
+          " 2>&1 | head -20
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install linting tools
+        run: pip install ruff
+      - name: Run ruff
+        run: ruff check .

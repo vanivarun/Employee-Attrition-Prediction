@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Employee Attrition Prediction - HR Analytics Suite. Predict which employees are likely to leave using machine learning insights based on 30+ features.">
   <title>Employee Attrition Prediction | HR Analytics</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -31,12 +32,12 @@
 <div class="container main-container">
 
   {% if prediction_text %}
-  <div class="result-card {% if 'Leave' in prediction_text %}result-danger{% elif 'Stay' in prediction_text %}result-success{% else %}result-neutral{% endif %} mb-4">
-    <div class="result-icon">
-      {% if 'Leave' in prediction_text %}
-        <i class="fas fa-triangle-exclamation"></i>
-      {% elif 'Stay' in prediction_text %}
+  <div class="result-card {% if 'Not Leave' in prediction_text %}result-success{% elif 'Leave' in prediction_text %}result-danger{% else %}result-neutral{% endif %} mb-4" role="alert" aria-live="polite">
+    <div class="result-icon" aria-hidden="true">
+      {% if 'Not Leave' in prediction_text %}
         <i class="fas fa-circle-check"></i>
+      {% elif 'Leave' in prediction_text %}
+        <i class="fas fa-triangle-exclamation"></i>
       {% else %}
         <i class="fas fa-info-circle"></i>
       {% endif %}
@@ -48,7 +49,8 @@
   </div>
   {% endif %}
 
-  <form action="{{ url_for('predict') }}" method="POST" autocomplete="on">
+  <form action="{{ url_for('predict') }}" method="POST" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
 
     <!-- Personal Information -->
     <div class="card section-card">
@@ -62,20 +64,21 @@
       <div class="card-body">
         <div class="row g-4">
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Age</label>
-            <input type="number" class="form-control" name="Age" placeholder="18-80" required min="18" max="80">
+            <label for="Age" class="form-label">Age <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="Age" name="Age" placeholder="18-60" required min="18" max="60" autocomplete="off" aria-describedby="ageHelp">
+            <div id="ageHelp" class="form-text">Employee's age (18-60)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Gender</label>
-            <select class="form-select" name="Gender" required>
+            <label for="Gender" class="form-label">Gender <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="Gender" name="Gender" required autocomplete="off">
               <option value="" disabled selected>Select gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Marital Status</label>
-            <select class="form-select" name="Marital Status" required>
+            <label for="MaritalStatus" class="form-label">Marital Status <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="MaritalStatus" name="Marital Status" required autocomplete="off">
               <option value="" disabled selected>Select status</option>
               <option value="Married">Married</option>
               <option value="Single">Single</option>
@@ -83,12 +86,13 @@
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Education Level</label>
-            <input type="number" class="form-control" name="Education" placeholder="1-5" required min="1" max="5">
+            <label for="Education" class="form-label">Education Level <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="Education" name="Education" placeholder="1-5" required min="1" max="5" autocomplete="off" aria-describedby="educationHelp">
+            <div id="educationHelp" class="form-text">1=Below College, 2=College, 3=Bachelor, 4=Master, 5=Doctor</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Education Field</label>
-            <select class="form-select" name="Education Field" required>
+            <label for="EducationField" class="form-label">Education Field <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="EducationField" name="Education Field" required autocomplete="off">
               <option value="" disabled selected>Select field</option>
               <option value="Life Sciences">Life Sciences</option>
               <option value="Medical">Medical</option>
@@ -99,8 +103,9 @@
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Distance From Home</label>
-            <input type="number" class="form-control" name="Distance From Home" placeholder="1-29" required min="1" max="29">
+            <label for="DistanceFromHome" class="form-label">Distance From Home <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="DistanceFromHome" name="Distance From Home" placeholder="1-29" required min="1" max="29" autocomplete="off" aria-describedby="distanceHelp">
+            <div id="distanceHelp" class="form-text">Distance from home to workplace (km)</div>
           </div>
         </div>
       </div>
@@ -118,8 +123,8 @@
       <div class="card-body">
         <div class="row g-4">
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Department</label>
-            <select class="form-select" name="Department" required>
+            <label for="Department" class="form-label">Department <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="Department" name="Department" required autocomplete="off">
               <option value="" disabled selected>Select department</option>
               <option value="Research & Development">Research & Development</option>
               <option value="Human Resources">Human Resources</option>
@@ -127,10 +132,10 @@
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Job Role</label>
-            <select class="form-select" name="Job Role" required>
+            <label for="JobRole" class="form-label">Job Role <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="JobRole" name="Job Role" required autocomplete="off">
               <option value="" disabled selected>Select role</option>
-              <option value="Sales Executives">Sales Executive</option>
+              <option value="Sales Executive">Sales Executive</option>
               <option value="Research Scientist">Research Scientist</option>
               <option value="Laboratory Technician">Laboratory Technician</option>
               <option value="Manufacturing Director">Manufacturing Director</option>
@@ -142,41 +147,46 @@
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Job Level</label>
-            <input type="number" class="form-control" name="Job Level" placeholder="1-5" required min="1" max="5">
+            <label for="JobLevel" class="form-label">Job Level <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="JobLevel" name="Job Level" placeholder="1-5" required min="1" max="5" autocomplete="off" aria-describedby="jobLevelHelp">
+            <div id="jobLevelHelp" class="form-text">Organizational level (1-5)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Business Travel</label>
-            <select class="form-select" name="BusinessTravel" required>
+            <label for="BusinessTravel" class="form-label">Business Travel <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="BusinessTravel" name="BusinessTravel" required autocomplete="off">
               <option value="" disabled selected>Select frequency</option>
-              <option value="Rarely">Rarely</option>
-              <option value="Frequently">Frequently</option>
-              <option value="No Travel">No Travel</option>
+              <option value="Travel_Rarely">Travel Rarely</option>
+              <option value="Travel_Frequently">Travel Frequently</option>
+              <option value="Non-Travel">No Travel</option>
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Over Time</label>
-            <select class="form-select" name="Over Time" required>
+            <label for="OverTime" class="form-label">Over Time <span class="text-danger" aria-hidden="true">*</span></label>
+            <select class="form-select" id="OverTime" name="Over Time" required autocomplete="off">
               <option value="" disabled selected>Select option</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </select>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Daily Rate</label>
-            <input type="number" class="form-control" name="Daily Rate" placeholder="100-1600" required min="100" max="1600">
+            <label for="DailyRate" class="form-label">Daily Rate <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="DailyRate" name="Daily Rate" placeholder="102-1499" required min="102" max="1499" autocomplete="off" aria-describedby="dailyRateHelp">
+            <div id="dailyRateHelp" class="form-text">Daily pay rate (102-1499)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Hourly Rate</label>
-            <input type="number" class="form-control" name="Hourly Rate" placeholder="30-100" required min="30" max="100">
+            <label for="HourlyRate" class="form-label">Hourly Rate <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="HourlyRate" name="Hourly Rate" placeholder="30-100" required min="30" max="100" autocomplete="off" aria-describedby="hourlyRateHelp">
+            <div id="hourlyRateHelp" class="form-text">Hourly pay rate (30-100)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Monthly Income</label>
-            <input type="number" class="form-control" name="Monthly Income" placeholder="1000-20000" required min="1000" max="20000">
+            <label for="MonthlyIncome" class="form-label">Monthly Income <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="MonthlyIncome" name="Monthly Income" placeholder="1009-19999" required min="1009" max="19999" autocomplete="off" aria-describedby="monthlyIncomeHelp">
+            <div id="monthlyIncomeHelp" class="form-text">Monthly salary (1009-19999)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Stock Option Level</label>
-            <input type="number" class="form-control" name="Stock Option Level" placeholder="0-3" required min="0" max="3">
+            <label for="StockOptionLevel" class="form-label">Stock Option Level <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="StockOptionLevel" name="Stock Option Level" placeholder="0-3" required min="0" max="3" autocomplete="off" aria-describedby="stockOptionHelp">
+            <div id="stockOptionHelp" class="form-text">Stock option level (0-3)</div>
           </div>
         </div>
       </div>
@@ -188,34 +198,35 @@
         <div class="section-icon bg-pink"><i class="fas fa-heart-pulse"></i></div>
         <div>
           <h3>Satisfaction Metrics</h3>
-          <p>Engagement and performance scores</p>
+          <p>Engagement and performance scores (1-4 scale)</p>
         </div>
       </div>
       <div class="card-body">
         <div class="row g-4">
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Environment Satisfaction</label>
-            <input type="number" class="form-control" name="Environment Satisfaction" placeholder="1-4" required min="1" max="4">
+            <label for="EnvironmentSatisfaction" class="form-label">Environment Satisfaction <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="EnvironmentSatisfaction" name="Environment Satisfaction" placeholder="1-4" required min="1" max="4" autocomplete="off">
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Job Involvement</label>
-            <input type="number" class="form-control" name="Job Involvement" placeholder="1-4" required min="1" max="4">
+            <label for="JobInvolvement" class="form-label">Job Involvement <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="JobInvolvement" name="Job Involvement" placeholder="1-4" required min="1" max="4" autocomplete="off">
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Job Satisfaction</label>
-            <input type="number" class="form-control" name="Job Satisfaction" placeholder="1-4" required min="1" max="4">
+            <label for="JobSatisfaction" class="form-label">Job Satisfaction <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="JobSatisfaction" name="Job Satisfaction" placeholder="1-4" required min="1" max="4" autocomplete="off">
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Relationship Satisfaction</label>
-            <input type="number" class="form-control" name="Relationship Satisfaction" placeholder="1-4" required min="1" max="4">
+            <label for="RelationshipSatisfaction" class="form-label">Relationship Satisfaction <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="RelationshipSatisfaction" name="Relationship Satisfaction" placeholder="1-4" required min="1" max="4" autocomplete="off">
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Work Life Balance</label>
-            <input type="number" class="form-control" name="Work Life Balance" placeholder="1-4" required min="1" max="4">
+            <label for="WorkLifeBalance" class="form-label">Work Life Balance <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="WorkLifeBalance" name="Work Life Balance" placeholder="1-4" required min="1" max="4" autocomplete="off">
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Performance Rating</label>
-            <input type="number" class="form-control" name="Performance Rating" placeholder="1-4" required min="1" max="4">
+            <label for="PerformanceRating" class="form-label">Performance Rating <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="PerformanceRating" name="Performance Rating" placeholder="3-4" required min="3" max="4" autocomplete="off" aria-describedby="perfRatingHelp">
+            <div id="perfRatingHelp" class="form-text">Performance rating (3-4 only)</div>
           </div>
         </div>
       </div>
@@ -233,40 +244,51 @@
       <div class="card-body">
         <div class="row g-4">
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Number of Companies Worked in</label>
-            <input type="number" class="form-control" name="Number of Companies Worked in" placeholder="0-9" required min="1" max="9">
+            <label for="NumCompaniesWorked" class="form-label">Number of Companies Worked <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="NumCompaniesWorked" name="Number of Companies Worked in" placeholder="0-9" required min="0" max="9" autocomplete="off" aria-describedby="numCompaniesHelp">
+            <div id="numCompaniesHelp" class="form-text">Total companies worked for (0-9)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Total Working Years</label>
-            <input type="number" class="form-control" name="Total Working Years" placeholder="0-40" required min="0" max="40">
+            <label for="TotalWorkingYears" class="form-label">Total Working Years <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="TotalWorkingYears" name="Total Working Years" placeholder="0-40" required min="0" max="40" autocomplete="off" aria-describedby="totalYearsHelp">
+            <div id="totalYearsHelp" class="form-text">Total years of work experience (0-40)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Training Times Last Year</label>
-            <input type="number" class="form-control" name="Training Times Last Year" placeholder="0-6" required min="0" max="6">
+            <label for="TrainingTimesLastYear" class="form-label">Training Times Last Year <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="TrainingTimesLastYear" name="Training Times Last Year" placeholder="0-6" required min="0" max="6" autocomplete="off" aria-describedby="trainingHelp">
+            <div id="trainingHelp" class="form-text">Training sessions attended last year (0-6)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Years At Company</label>
-            <input type="number" class="form-control" name="Years At Company" placeholder="0-40" required min="0" max="40">
+            <label for="YearsAtCompany" class="form-label">Years At Company <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="YearsAtCompany" name="Years At Company" placeholder="0-40" required min="0" max="40" autocomplete="off" aria-describedby="yearsCompanyHelp">
+            <div id="yearsCompanyHelp" class="form-text">Years at current company (0-40)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Years In Current Role</label>
-            <input type="number" class="form-control" name="Years In Current Role" placeholder="0-18" required min="0" max="18">
+            <label for="YearsInCurrentRole" class="form-label">Years In Current Role <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="YearsInCurrentRole" name="Years In Current Role" placeholder="0-18" required min="0" max="18" autocomplete="off" aria-describedby="yearsRoleHelp">
+            <div id="yearsRoleHelp" class="form-text">Years in current role (0-18)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Years Since Last Promotion</label>
-            <input type="number" class="form-control" name="Years Since Last Promotion" placeholder="0-15" required min="0" max="15">
+            <label for="YearsSinceLastPromotion" class="form-label">Years Since Last Promotion <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="YearsSinceLastPromotion" name="Years Since Last Promotion" placeholder="0-15" required min="0" max="15" autocomplete="off" aria-describedby="yearsPromoHelp">
+            <div id="yearsPromoHelp" class="form-text">Years since last promotion (0-15)</div>
           </div>
           <div class="col-md-6 col-lg-4">
-            <label class="form-label">Years With Current Manager</label>
-            <input type="number" class="form-control" name="Years With Curr Manager" placeholder="0-17" required min="0" max="17">
+            <label for="YearsWithCurrManager" class="form-label">Years With Current Manager <span class="text-danger" aria-hidden="true">*</span></label>
+            <input type="number" class="form-control" id="YearsWithCurrManager" name="Years With Curr Manager" placeholder="0-17" required min="0" max="17" autocomplete="off" aria-describedby="yearsManagerHelp">
+            <div id="yearsManagerHelp" class="form-text">Years with current manager (0-17)</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="submit-wrap">
-      <button type="submit" class="btn-predict">
-        <i class="fas fa-wand-magic-sparkles"></i> Predict Attrition
+      <button type="submit" class="btn-predict" id="predictBtn">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <span class="btn-text">Predict Attrition</span>
+        <span class="btn-loading d-none">
+          <i class="fas fa-spinner fa-spin"></i> Predicting...
+        </span>
       </button>
       <p class="submit-hint">Results are generated instantly using our trained ML model.</p>
     </div>
@@ -278,5 +300,59 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Client-side form validation and UX enhancements
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form[action$="/predict"]');
+  const submitBtn = document.getElementById('predictBtn');
+  const btnText = submitBtn.querySelector('.btn-text');
+  const btnLoading = submitBtn.querySelector('.btn-loading');
+
+  // Add bootstrap validation styles
+  form.addEventListener('submit', function(e) {
+    if (!form.checkValidity()) {
+      e.preventDefault();
+      e.stopPropagation();
+      form.classList.add('was-validated');
+      return;
+    }
+
+    // Show loading state
+    submitBtn.disabled = true;
+    btnText.classList.add('d-none');
+    btnLoading.classList.remove('d-none');
+  });
+
+  // Real-time validation feedback
+  const inputs = form.querySelectorAll('input[required], select[required]');
+  inputs.forEach(input => {
+    input.addEventListener('blur', function() {
+      if (this.checkValidity()) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+      } else {
+        this.classList.add('is-invalid');
+        this.classList.remove('is-valid');
+      }
+    });
+
+    input.addEventListener('input', function() {
+      if (this.classList.contains('is-invalid') && this.checkValidity()) {
+        this.classList.remove('is-invalid');
+        this.classList.add('is-valid');
+      }
+    });
+  });
+
+  // Reset loading state if page is restored from bfcache
+  window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+      submitBtn.disabled = false;
+      btnText.classList.remove('d-none');
+      btnLoading.classList.add('d-none');
+    }
+  });
+});
+</script>
 </body>
 </html>

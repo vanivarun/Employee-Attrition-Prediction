@@ -19,13 +19,10 @@ build/
 .ipynb_checkpoints/
 *.ipynb
 
-# Model artifacts (large binary files)
+# Model artifacts (we copy model.pkl explicitly in Dockerfile)
 *.pkl
 *.joblib
 *.model
-model.pkl
-best_model.pkl
-final_catboost_model.pkl
 
 # CatBoost
 catboost_info/
@@ -56,11 +53,18 @@ htmlcov/
 .pytest_cache/
 .tox/
 
-# Data files (uncomment if you don't want to track data)
-# Data/
-# *.csv
+# Data files
+Data/
+*.csv
 
 # Backup files
 *.backup
 *.bak
 *_backup.*
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
